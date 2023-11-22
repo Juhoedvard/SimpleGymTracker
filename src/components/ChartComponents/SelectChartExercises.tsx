@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 import { trpc } from "@/app/_trpc/client";
 import { Loader2 } from "lucide-react";
