@@ -60,7 +60,7 @@ const SelectChartExercises = ({bodypart}: ChartProps) => {
     return (
         <div className="flex flex-col md:flex-row ">
             <div className="flex-1 md:w-1/2 ">
-                {!isLoading ? <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     {exercises?.map((e, index) => {
                         return (
                             <div key={index} className="py-2">
@@ -72,10 +72,7 @@ const SelectChartExercises = ({bodypart}: ChartProps) => {
                         )
                     })
                 }
-                </div> :
-                <div className="fles justify-center items-center">
-                    <Loader2 className="animate-spin"/>
-                </div>  }
+                </div> 
             </div>
             <div className="flex-2 justify-center items-center md:w-1/2 px-4">
                 <ExerciseChart exercise={selectedExercise}/>
