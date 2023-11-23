@@ -41,7 +41,7 @@ export function constructMetadata({
       ]
     },
     icons,
-    metadataBase: new URL("https://localhost:3000"),
+    metadataBase: new URL("https://simple-gym-tracker.vercel.app"),
     themeColor: "#FFF",
     ...(noIndex && {
       robots: {
