@@ -104,7 +104,7 @@ export const appRouter = router({
                 reps: z.number().min(1, {message: "You must have done atleast one rep"}),
                 weight: z.number().min(1, {message: "Please add your weight"}),
                 sets: z.number()
-            }))
+            })).min(1)
         }))
         .mutation(async ({input}) => {
 
@@ -126,7 +126,7 @@ export const appRouter = router({
                     sets: true
                 }
             })
-            if(!finishedExercise) throw new TRPCError({code: "INTERNAL_SERVER_ERROR"})
+            if(finishedExercise.sets.length < 2) throw new TRPCError({code: "INTERNAL_SERVER_ERROR"})
             return finishedExercise
         }),
 

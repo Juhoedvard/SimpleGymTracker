@@ -3,19 +3,21 @@ import { ConnecSets, ConnectExercises } from "@/CreateTestUserData/ConnectExerci
 import { CreateTestWorkouts } from "@/CreateTestUserData/createtestworkouts";
 import { RemoveTestWorkouts } from "@/CreateTestUserData/Removetestworkouts";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { redirect } from "next/navigation";
 
 
 const Page = async () => {
 
     const {getUser} = getKindeServerSession()
     const user = getUser()
-    if(user.id && user.given_name === "Testi"){
-          /// await RemoveTestWorkouts(user.id)
-            await CreateTestWorkouts(user.id)
-            await ConnectExercises(user.id)
-            await ConnecSets(user.id)
+    if(!user.id || user.given_name !== "Testi"){
+        redirect("/")
     }
 
+    /// await RemoveTestWorkouts(user.id)
+    await CreateTestWorkouts(user.id)
+    await ConnectExercises(user.id)
+    await ConnecSets(user.id)
 
 
     return (
@@ -24,7 +26,6 @@ const Page = async () => {
             <h1 className="mb-3 font-bold text-5xl">Creating your testworkouts</h1>
         </div>
         <div className="flex flex-col py-8 justify-center items-center ">
-
             <p>Created testworkouts or removed</p>
         </div>
         </main>

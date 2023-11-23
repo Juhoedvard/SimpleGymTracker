@@ -28,6 +28,7 @@ const bodyparts = [
 const Charts = () => {
 
     const [animate, setAnimate] = useState<boolean>(false)
+    const [selectedBodypart, setSelectedBodyPart] = useState<string>('')
     const [selected, setSelected] = useState<{ [index: number]: boolean }>(() => {
         const initialState: { [index: number]: boolean } = {}
         bodyparts.forEach((_, index) => {
@@ -35,7 +36,6 @@ const Charts = () => {
         })
         return initialState
       })
-    const [selectedBodypart, setSelectedBodyPart] = useState<string>('')
 
     const getExercise = (index: number, bodypart: string) => {
         setSelected((prevSelected) => {
@@ -53,6 +53,7 @@ const Charts = () => {
         setAnimate(true)
         setSelectedBodyPart(bodypart)
     }
+    
     return (
         <main className="mx-auto max-w-7xl p-4 md:p-10">
                <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
@@ -72,10 +73,8 @@ const Charts = () => {
                     </div>
                     <div>
                        <SelectChartExercises bodypart={selectedBodypart}/> 
-                    </div>
-                    
+                    </div>     
                 </div>
-                
         </main>
     )
 }

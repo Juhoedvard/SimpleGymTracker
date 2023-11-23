@@ -7,12 +7,12 @@ import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { useToast } from "../ui/use-toast"
 
-interface WorkOutOnProgressProps {
+type WorkOutOnProgressProps ={
     workout: WorkOut
     workoutExercises: workoutExercises[]
-
   }
-interface workoutExercises {
+
+type workoutExercises = {
     id: string
     workoutId: string
     exerciseId: string
@@ -34,9 +34,8 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
             return toast({
                 title: "Workout finished, great job 🔥! "
             })
-           
         },
-        onError(error, variables, context) {
+        onError(error) {
             return toast({
                 variant: "destructive",
                 title: `Something went wrong ${error}`
@@ -44,11 +43,20 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
         },
     })
     const finishWorkout = () => {
-        mutate({id: workout.id })
+        workoutExercises.map((exercise) => {
+            if(exercise.sets.length < 1){
+                toast({
+                    variant:"destructive",
+                    title: "You need to add atleast one set to each exercise"
+                })
+            }
+            else {
+                 mutate({id: workout.id })
+            }
+        })
     }
-    console.log(workoutExercises)
     return(
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="md:col-span-1">
             {workoutExercises.map((e) => {
                 return(
@@ -74,7 +82,7 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
                 : <Loader2 className="animate-spin">Finishing workout...</Loader2>    
                 }
             </div>
-        </section>      
+        </div>      
     )
 }
 

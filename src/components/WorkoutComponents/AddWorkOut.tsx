@@ -2,14 +2,10 @@
 
 import { useState } from "react"
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog"
-
-
 import React from "react"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -22,10 +18,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { ChevronLeftIcon, ChevronRightIcon, Loader2 } from "lucide-react"
-import { SelectExercises } from "./SelectExercises"
+import SelectExercises from "./SelectExercises"
 import { trpc } from "@/app/_trpc/client"
 import { useRouter } from "next/navigation"
-
 
 type Exercise = {
     id: string
@@ -57,10 +52,7 @@ const FormSchema = z.object({
   }),
 })
 
-
-
 const AddWorkOut = () => {
-
 
     const [open, setOpen] = useState<boolean>(false)
     const [slideState, setSlideState] = useState<number>(1)
@@ -80,7 +72,6 @@ const AddWorkOut = () => {
     })
   
     function onSubmit() {
-    
         const workoutname = selectedMuscleGroups.join("/")
         mutate({name: workoutname, exercise: selectedExercises })
         setSelectedExercises([])
@@ -90,7 +81,7 @@ const AddWorkOut = () => {
             if(!visible) {
                 setOpen(visible)
             }
-        }}>
+            }}>
             <DialogTrigger onClick={() => setOpen(true)} asChild>
                 <Button>Start a new workout</Button>
             </DialogTrigger>
@@ -174,38 +165,38 @@ const AddWorkOut = () => {
 
                     <div className={slideState === 1 ? "flex w-full justify-end" : "flex w-full justify-between"}>
                         {slideState !== 1 &&
-                        
-                        <Button variant="outline" size="icon" type="button"
-                        onClick={() => setSlideState(slideState -1)}
-                        >
-                            <div className="w-4 h-4">
-                            <ChevronLeftIcon />
-                            </div>
-                        </Button>
-                      
-                        } 
-                        {slideState === 1 && (        
-                        <Button variant="outline" size="icon" type="button"
-                            onClick={() => setSlideState(slideState +1)}
+                            
+                            <Button variant="outline" size="icon" type="button"
+                            onClick={() => setSlideState(slideState -1)}
                             >
-                            <div className="w-4 h-4">
-                                <ChevronRightIcon />
-                            </div>
-                        </Button>
-                        ) 
-                    }
-                    {slideState === 2 &&  !startingWorkout ?<div>
-                        <Button variant="outline" type="submit">Start your workout</Button>
-                    </div> : (
-                        startingWorkout && (
-                            <Loader2 className="animate-spin">Starting workout...</Loader2>
-                        )
-                    )}
+                                <div className="w-4 h-4">
+                                <ChevronLeftIcon />
+                                </div>
+                            </Button>
+                        
+                            } 
+                            {slideState === 1 && (        
+                            <Button variant="outline" size="icon" type="button"
+                                onClick={() => setSlideState(slideState +1)}
+                                >
+                                <div className="w-4 h-4">
+                                    <ChevronRightIcon />
+                                </div>
+                            </Button>
+                            ) 
+                        }
+                        {slideState === 2 &&  !startingWorkout ?<div>
+                            <Button variant="outline" type="submit">Start your workout</Button>
+                        </div> : (
+                            startingWorkout && (
+                                <Loader2 className="animate-spin">Starting workout...</Loader2>
+                            )
+                        )}
                     </div>
                 </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
+            </Form>
+        </DialogContent>
+    </Dialog>
     )
 }
 

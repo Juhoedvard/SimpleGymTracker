@@ -41,7 +41,6 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
     }, [open])
 
     const handleOpenDialog = () => {
-
         if(open){
         const localSets = window.localStorage.getItem(`${exercise.name}sets`)
         if (localSets === null || parseInt(localSets) < 1) {
@@ -52,10 +51,8 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         } 
         const localReps: {[index: number]: {reps: number, weight: number, finished: boolean}} = {}
         for (let i = 0; i < sets; i++) {
-            console.log('forloop')
             const rep = window.localStorage.getItem(`${exercise.name}set${i}`)
             if (rep !== undefined && rep !== null && rep !== "undefined") {
-                console.log(rep)
                 localReps[i] = JSON.parse(rep)
                 }
           }
@@ -63,21 +60,16 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         }
       }
 
-      
   const {mutate, isLoading: finishingExercise} = trpc.finishExercise.useMutation({
         onSuccess: () =>{
             setOpen(false)
             setFinished(true)
-            
         },
         onError: () => {       
-
                 return toast({
                 variant: "destructive",
                 title: `Something went wrong! Make sure that you have applied weight and reps for each set`
-                
             })             
-          
         }
     })
 
@@ -102,7 +94,6 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         return updatedReps
     })
     }
-    console.log(reps)
 
     const repFinished = (index: number) => {
         setReps((prevReps) => {
@@ -112,6 +103,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
             return updatedFinished
     })
     }
+
     const addRep = (index: number, set : {reps: number, weight: number, finished: boolean}) => {
         if (!isNaN(set.reps) && set.reps > 0 && !isNaN(set.weight) && set.weight > 0) {
         setReps((prevReps) => {
@@ -130,6 +122,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         }
 
     }
+
     const finishExercise = () => {
         mutate({
             id: workoutExerciseID, 
@@ -142,7 +135,6 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
     }
 
     return (
-        
         <Dialog open={open} onOpenChange={(visible) => {
             if(!visible) {
                 setOpen(visible)
@@ -173,63 +165,62 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
                 </DialogHeader>
 
                 <div className="flex flex-col justify-evenly px-2 gap-4">
-                {Array(sets).fill(null).map((_, index)=> {
-
-                    return(
-                        <div key={index} className={reps[index]?.finished === undefined || reps[index]?.finished === false ? "flex flex-col gap-2" : "flex flex-col  gap-2"}>
-                            <Label className="w-fit border-b border-b-slate-400 ">Set {index +1}:</Label>
-                            <div className="flex justify-between">
-                                {reps[index]?.finished === false ||  reps[index]?.finished === undefined ? 
-                                <div className="flex gap-2">
-                                        <div className="flex flex-col items-center justify-evenly gap-2">
-                                            <Label className="w-20">Reps:</Label>
-                                            <Input size={2} className="text-center w-20"placeholder={`0`} value={reps[index]?.reps || ""} onChange={(e) =>updateRep(index, parseInt(e.target.value) )} required={true}  type="number" min={1}></Input>
+                    {Array(sets).fill(null).map((_, index)=> {
+                        return(
+                            <div key={index} className={reps[index]?.finished === undefined || reps[index]?.finished === false ? "flex flex-col gap-2" : "flex flex-col  gap-2"}>
+                                <Label className="w-fit border-b border-b-slate-400 ">Set {index +1}:</Label>
+                                <div className="flex justify-between">
+                                    {reps[index]?.finished === false ||  reps[index]?.finished === undefined ? 
+                                    <div className="flex gap-2">
+                                            <div className="flex flex-col items-center justify-evenly gap-2">
+                                                <Label className="w-20">Reps:</Label>
+                                                <Input size={2} className="text-center w-20"placeholder={`0`} value={reps[index]?.reps || ""} onChange={(e) =>updateRep(index, parseInt(e.target.value) )} required={true}  type="number" min={1}></Input>
+                                            </div>
+                                            <div className="flex flex-col items-center gap-2">
+                                            <Label className="w-20" >Weight (kg):</Label>
+                                            <Input size={2} className="text-center w-20"placeholder={`0`} value={reps[index]?.weight || ""} onChange={(e) =>updateWeight(index, parseInt(e.target.value) )} required={true}  type="number" min={1}></Input>
+                                            </div>
+                                            <div className="flex items-end">
+                                            <Button variant="default"  onClick={() => addRep(index, reps[index])}>Add</Button> 
+                                            </div>
+                                    </div> :
+                                    <div className="flex  items-center justify-evenly gap-2 ">
+                                        <div className="flex flex-col">
+                                            <Label className="w-20">Reps: </Label>
+                                            <span> {reps[index].reps} </span>
                                         </div>
-                                        <div className="flex flex-col items-center gap-2">
-                                           <Label className="w-20" >Weight (kg):</Label>
-                                           <Input size={2} className="text-center w-20"placeholder={`0`} value={reps[index]?.weight || ""} onChange={(e) =>updateWeight(index, parseInt(e.target.value) )} required={true}  type="number" min={1}></Input>
+                                        <div className="flex flex-col ">
+                                            <Label>Weight (kg): </Label>
+                                            <span> {reps[index].weight}</span>
                                         </div>
-                                        <div className="flex items-end">
-                                           <Button variant="default"  onClick={() => addRep(index, reps[index])}>Add</Button> 
-                                        </div>
-                                </div> :
-                                <div className="flex  items-center justify-evenly gap-2 ">
-                                    <div className="flex flex-col">
-                                        <Label className="w-20">Reps: </Label>
-                                        <span> {reps[index].reps} </span>
+                                        
+                                    <Button variant={"ghost"} onClick={() => repFinished(index)}><Check color="green" /></Button>
                                     </div>
-                                    <div className="flex flex-col ">
-                                        <Label>Weight (kg): </Label>
-                                        <span> {reps[index].weight}</span>
-                                    </div>
-                                    
-                                <Button variant={"ghost"} onClick={() => repFinished(index)}><Check color="green" /></Button>
-                                </div>
-                             
-                                }
-                                {index === sets -1 && 
-                                <Tooltip>
-                                    <TooltipTrigger asChild>         
-                                            <X className="w-4 h-4" onClick={() => {
-                                                setSets(sets -1)
-                                                window.localStorage.setItem("sets", JSON.stringify(sets -1))
-                                                }}/> 
-                                                
-                                    </TooltipTrigger>
-                                    <TooltipContent>                                             
-                                            Remove last set
-                                    </TooltipContent>
-                                </Tooltip>
-                                }
-                            </div>     
-                        </div>
-                    )
-            })}
-                        <DialogFooter className="flex justify-end pt-4">
-                            {!finishingExercise ?<Button variant="outline" className=" text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishExercise()} >
-                                Finish exercise
-                            </Button> : <Loader2 className="w-4 h-4 animate-spin"/>}
-                        </DialogFooter>
+                                
+                                    }
+                                    {index === sets -1 && 
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>         
+                                                <X className="w-4 h-4" onClick={() => {
+                                                    setSets(sets -1)
+                                                    window.localStorage.setItem("sets", JSON.stringify(sets -1))
+                                                    }}/> 
+                                                    
+                                        </TooltipTrigger>
+                                        <TooltipContent>                                             
+                                                Remove last set
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    }
+                                </div>     
+                            </div>
+                        )
+                })}
+                    <DialogFooter className="flex justify-end pt-4">
+                        {!finishingExercise ?<Button variant="outline" className=" text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishExercise()} >
+                            Finish exercise
+                        </Button> : <Loader2 className="w-4 h-4 animate-spin"/>}
+                    </DialogFooter>
                 </div>
              </TooltipProvider>
             </DialogContent>

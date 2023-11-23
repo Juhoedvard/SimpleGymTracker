@@ -15,12 +15,6 @@ interface WorkoutProps {
 const Page = async ({params} : WorkoutProps) => {
 
     const {workoutID} = params
-    console.log(workoutID)
-    const {getUser} = getKindeServerSession()
-    const user = getUser()
-
-    if(!user || !user.id) redirect(`/auth-callback?origin=UsersPage/${workoutID}`)
-
     const workout = await db.workOut.findFirst({
         where: {
           id: workoutID,
@@ -70,7 +64,6 @@ const Page = async ({params} : WorkoutProps) => {
                                         }
                                     </div>
                                   </li>
-    
                               )
                           })}
                       </ul> : exercises && 

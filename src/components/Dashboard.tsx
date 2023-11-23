@@ -54,7 +54,6 @@ const Dashboard = () => {
                             </li>
                         ))}
                     </ol>
-                    
                 </div>
                ) : isLoading ? (
                 <Skeleton height={100} className="my-2" count={3}/>

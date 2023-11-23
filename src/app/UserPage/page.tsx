@@ -1,5 +1,3 @@
-import { RemoveTestWorkouts } from "@/CreateTestUserData/Removetestworkouts"
-import { CreateTestWorkouts } from "@/CreateTestUserData/createtestworkouts"
 import Dashboard from "@/components/Dashboard"
 import { db } from "@/db"
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"

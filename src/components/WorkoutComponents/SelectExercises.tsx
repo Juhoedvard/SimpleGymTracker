@@ -2,13 +2,11 @@
 
 import { Checkbox } from "@/components/ui/checkbox"
 import {
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-
 import { trpc } from "@/app/_trpc/client"
 import { Loader2 } from "lucide-react"
 
@@ -22,15 +20,12 @@ type Exercise = {
     id: string
 
 }
-export function SelectExercises({bodypart,  selectedExercises} : bodypartProps) {
+const SelectExercises = ({bodypart,  selectedExercises} : bodypartProps) => {
   
-
   const {data: exercises, isLoading} = trpc.getExercises.useQuery({bodypart})
-  console.log(exercises)
+  if (isLoading) return <Loader2 className="animate-spin h-2 w-2"></Loader2>
 
-  if (isLoading) return <Loader2>Getting</Loader2>
   return (
- 
         <FormField
           name="exercises"
           render={() => (
@@ -55,15 +50,16 @@ export function SelectExercises({bodypart,  selectedExercises} : bodypartProps) 
                                 const newValue = Array.isArray(field.value) ? [...field.value] : []
                                 if (checked) {
                                 newValue.push(ex.id);
-                                } else {
+                                } 
+                                else {
                                 const index = newValue.indexOf(ex.id)
-                                if (index !== -1) {
-                                    newValue.splice(index, 1)
-                                }
+                                  if (index !== -1) {
+                                      newValue.splice(index, 1)
+                                  }
                                 }
                                 selectedExercises.push({id: ex.id})
                                 field.onChange(newValue)
-                                        }}
+                              }}
                           />
                         <FormLabel className="text-sm font-normal">
                           {ex.name}
@@ -79,3 +75,4 @@ export function SelectExercises({bodypart,  selectedExercises} : bodypartProps) 
         />
   )
 }
+export default SelectExercises

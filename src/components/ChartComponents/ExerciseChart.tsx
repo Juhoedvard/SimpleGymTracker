@@ -19,6 +19,7 @@ const ExerciseChart = ({exercise} : ExerciseChartProps) => {
           <></>
         )
     }
+
     const dailyData = data.map((workout) => {
 
       const sets = workout.sets.filter((set) => set.sets > 0)
@@ -26,11 +27,13 @@ const ExerciseChart = ({exercise} : ExerciseChartProps) => {
       return {
         date: format(new Date(workout.workout.date).getTime(), "eeee  dd/MM/yyyy"),
         volume: volume,
-      };
-    });
+      }
+    })
+
     if(dailyData.length < 3 ) {
       return (<div className="flex">Not enought data to create a chart. You need atleast 3 workouts which include the same movement to create a chart.</div>)
     }
+
     return(
       <>
         <h2 className="p-4 font-semibold text-3xl md:text-5xl">Total volume</h2>
@@ -55,7 +58,6 @@ const ExerciseChart = ({exercise} : ExerciseChartProps) => {
         </div>}
       </>
     )
-    
 }
 
 export default ExerciseChart

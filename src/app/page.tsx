@@ -1,11 +1,10 @@
-import Link from "next/link";
 import MaxWidthWrapper from "../components/MaxWidthWrapper";
 import { buttonVariants } from "@/components/ui/button";
+import { RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 
 
 
 export default function Home() {
-
 
   return (
     <>
@@ -16,12 +15,13 @@ export default function Home() {
       <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
         SimpleGymTracker works as training diary. You can keep track of your gym progress including what weighs you have used and how many sets you have done. You can also get an access to charts about your workouts
       </p>
-      <Link className={buttonVariants({
+      {/*Vaihda tämä */}
+      <RegisterLink className={buttonVariants({
         size: 'lg',
         className: "mt-5"
-      })}href='/SignUp'>
+      })}>
         Start Tracking
-      </Link>
+      </RegisterLink>
     </MaxWidthWrapper>
 
     <div className="mx-auto mb-32 mt-32 max-w-5xl sm:mt-56">
