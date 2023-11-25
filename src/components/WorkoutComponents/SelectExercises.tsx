@@ -23,7 +23,7 @@ type Exercise = {
 const SelectExercises = ({bodypart,  selectedExercises} : bodypartProps) => {
   
   const {data: exercises, isLoading} = trpc.getExercises.useQuery({bodypart})
-  if (isLoading) return <Loader2 className="animate-spin h-2 w-2"></Loader2>
+  if (isLoading) return <Loader2 className="animate-spin h-4 w-4"></Loader2>
 
   return (
         <FormField

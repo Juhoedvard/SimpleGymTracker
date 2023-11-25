@@ -48,7 +48,7 @@ const Navbar = () =>  {
                         </Link>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost"><p >Logged in as <span className="text-blue-600">{user.given_name}</span></p></Button>
+                                <Button variant="ghost"><p className="truncate">Logged in as <span className="text-blue-600 ">{user.given_name}</span></p></Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-52">
                                 <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>

@@ -4,6 +4,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { redirect } from "next/navigation"
 
 
+
 const UserPage = async () => {
     const { getUser } = getKindeServerSession()
     const user = getUser()
@@ -20,7 +21,7 @@ const UserPage = async () => {
     
     return (
         <div>
-            <Dashboard/>
+            <Dashboard userId={user.id}/>
         </div>
     )
 }

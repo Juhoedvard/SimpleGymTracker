@@ -16,6 +16,7 @@ model User {
   email                  String    @unique
   testUser               Boolean   @default(false)
   WorkOuts               WorkOut[]
+  SavedWorkouts          SavedWorkout[]
   WorkoutExercises       WorkoutExercises[]
   stripeCustomerID       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionID   String?   @unique @map(name: "stripe_subscription_id")
@@ -35,13 +36,26 @@ model WorkOut {
   @@index([userId])
 }
 
+model SavedWorkout {
+  id               String             @id @default(cuid())
+  name             String
+  user             User               @relation(fields: [userId], references: [id])
+  userId           String
+  exercises       Exercise[] 
+
+  @@index([userId])
+}
+
 model Exercise {
   id               String             @id @default(cuid())
   name             String             @unique
   gategory         String
   workoutId        String?
   WorkoutExercises WorkoutExercises[]
+  savedWorkout     SavedWorkout       @relation(fields: [savedWorkoutId], references: [id])
+  savedWorkoutId   String             @default("")
 
+  @@index([savedWorkoutId])
   @@index([workoutId])
 }
 
@@ -50,23 +64,22 @@ model Set {
   reps       Int
   sets       Int
   weight     Int      @default(0)
-  exercise   WorkoutExercises @relation(fields: [exerciseId], references: [id])
+  exercise   WorkoutExercises @relation(fields: [exerciseId], references: [id]) 
   exerciseId String
 
   @@index([exerciseId])
 }
 
 model WorkoutExercises {
-  id         String   @id @default(cuid())
-  workout    WorkOut  @relation(fields: [workoutId], references: [id])
-  workoutId  String
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  user       User     @relation(fields: [userId], references: [id]) 
-  userId     String  
-  exerciseId String
-  sets       Set[]
-  finished   Boolean  @default(false)
-
+  id              String   @id @default(cuid())
+  workout         WorkOut?  @relation(fields: [workoutId], references: [id])
+  workoutId       String   
+  exercise        Exercise @relation(fields: [exerciseId], references: [id])
+  user            User     @relation(fields: [userId], references: [id]) 
+  userId          String  
+  exerciseId      String
+  sets            Set[]
+  finished        Boolean  @default(false)
 
   @@index([userId])
   @@index([workoutId])

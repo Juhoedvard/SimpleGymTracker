@@ -1,9 +1,9 @@
 
 import WorkOutOnProgress from "@/components/WorkoutComponents/WorkOutOnProgress"
 import { db } from "@/db"
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
+
 import { format } from "date-fns"
-import { notFound, redirect } from "next/navigation"
+import { notFound} from "next/navigation"
 
 
 interface WorkoutProps {
@@ -28,9 +28,9 @@ const Page = async ({params} : WorkoutProps) => {
           }
         },
       })
-    const exercises = workout?.WorkoutExercises
+   
     if (!workout) notFound()
-
+    const exercises = workout?.WorkoutExercises.map((exercises) => (exercises))
 
     return ( 
         <main className="mx-auto max-w-7xl md:p-10">
@@ -67,7 +67,7 @@ const Page = async ({params} : WorkoutProps) => {
                               )
                           })}
                       </ul> : exercises && 
-                      <WorkOutOnProgress workout={workout} workoutExercises={workout.WorkoutExercises} />}
+                      <WorkOutOnProgress workout={workout} workoutExercises={exercises} />}
                     </div>
             </main>
             

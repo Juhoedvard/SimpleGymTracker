@@ -24,8 +24,9 @@ const ExerciseChart = ({exercise} : ExerciseChartProps) => {
 
       const sets = workout.sets.filter((set) => set.sets > 0)
       const volume = sets.reduce((sum, set) => sum + set.reps * set.weight * set.sets, 0)
+      const workoutDate = workout.workout ?  format(new Date(workout.workout.date).getTime(), "eeee  dd/MM/yyyy"): ""
       return {
-        date: format(new Date(workout.workout.date).getTime(), "eeee  dd/MM/yyyy"),
+        date: workoutDate,
         volume: volume,
       }
     })

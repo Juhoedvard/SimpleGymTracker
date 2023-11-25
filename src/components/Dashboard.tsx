@@ -1,25 +1,46 @@
-"use client"
 
-import { trpc } from "@/app/_trpc/client"
 import AddWorkOut from "./WorkoutComponents/AddWorkOut"
-import Skeleton from "react-loading-skeleton"
 import Link from "next/link"
 import { format } from "date-fns"
 import { AlertTriangle, Check } from "lucide-react"
-import { TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
-import { Tooltip } from "./ui/tooltip"
+import { db } from "@/db"
+import StartExistingWorkout from "./WorkoutComponents/StartExistingWorkout"
 
-
-const Dashboard = () => {
+type DashboardProps = {
+    userId: string
+}
+const Dashboard = async ({userId} : DashboardProps) => {
     
-    const {data: workouts, isLoading} = trpc.getUserWorkouts.useQuery()
+    const workouts = await db.workOut.findMany({
+        where: {
+            userId: userId
+        },
+        include: {
+            WorkoutExercises: true,
+          },
+        orderBy: {
+            date: "desc"
+        }
+    })
+    const savedWorkouts = await db.savedWorkout.findMany({
+        where: {
+            userId: userId
+        },
+        include: {
+            exercises: true
+        }
+    })
+    console.log(savedWorkouts)
     return (
         <main className="mx-auto p-4 max-w-7xl md:p-10">
             <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
                 <h1 className="mb-3 font-bold text-5xl">Your workouts</h1>
-                <AddWorkOut/>
+                <div className="flex gap-2">
+                    <AddWorkOut/>
+                    <StartExistingWorkout savedWorkouts={savedWorkouts} />
+                </div> 
             </div>
-            
+
             {/*Show user's workouts */}
 
             {workouts && workouts.length > 0 ? (
@@ -30,34 +51,21 @@ const Dashboard = () => {
                                 <Link href={`/UserPage/${workout.id}`} className="flex gap-2">
                                    <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
                                     <div className="flex-1 truncate">
-                                         <div className="flex items-center space-x-3">
-                                         <h3 className="truncate text-lg font-medium ">{workout.name}</h3>
+                                        <div className="flex items-center space-x-3">
+                                            <h3 className="truncate text-lg font-medium ">{workout.name}</h3>
+                                        </div>
                                     </div>
-                                   </div>
-                                   <div className="flex gap-4">
-                                     <p>{format(new Date(workout.date), "eeee  dd/MM/yyyy")}</p>
-                                     {!workout.finished ? 
-                                     <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                             <AlertTriangle color="blue"className="h-4 w-4 animate-bounce" /> 
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p className="text-black">Workout not finished yet!</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                     </TooltipProvider>
-                                     : <Check color="green" className="h-6 w-6"/> }                                       
-                                    </div> 
+                                    <div className="flex gap-4">
+                                        <p>{format(new Date(workout.date), "eeee  dd/MM/yyyy")}</p>
+                                        {!workout.finished ?  <AlertTriangle color="blue"className="h-4 w-4 animate-bounce" />  : <Check color="green" className="h-6 w-6"/> }                                       
+                                        </div> 
                                    </div>
                                 </Link>
                             </li>
                         ))}
                     </ol>
                 </div>
-               ) : isLoading ? (
-                <Skeleton height={100} className="my-2" count={3}/>
-                ) : (
+               ) :  (
                 <div className="mt-16 flex flex-col items-center gap-2">
                     <h3 className="font-semibold text-xl">No workouts yet</h3>
                     <p>Start your first workout now!</p>

@@ -64,9 +64,7 @@ export const appRouter = router({
             if (!exercises) throw new TRPCError({code: 'NOT_FOUND'})
             else {
             return exercises
-        }
-            
-           
+        }                   
     }),
 
     startWorkOut: privateProcedure
@@ -90,13 +88,33 @@ export const appRouter = router({
                             exerciseId: exerciseData.id
                       })),
                     }
-     
                   },
                 },
               })
               return newWorkout
         }),
-
+    saveWorkout: privateProcedure
+        .input(z.object({
+            name: z.string(),
+            exercise: z.array(z.object({
+                id: z.string()
+            }))
+        }))
+        .mutation(async ({ctx, input}) => {
+            await db.savedWorkout.create({
+                data: {
+                    name: input.name,
+                    userId: ctx.userId,
+                    exercises: {
+                      connect: 
+                          input.exercise.map((exerciseData) => ({
+                              id: exerciseData.id
+                        })),
+                      }
+                    },
+                  
+            })
+        }),
     finishExercise: privateProcedure
         .input(z.object({
             id: z.string(),

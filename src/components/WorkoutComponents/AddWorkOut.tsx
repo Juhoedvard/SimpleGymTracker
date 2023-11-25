@@ -56,6 +56,7 @@ const AddWorkOut = () => {
 
     const [open, setOpen] = useState<boolean>(false)
     const [slideState, setSlideState] = useState<number>(1)
+    const [workoutSaved, setWorkoutSaved] = useState<boolean>(false)
     const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([])
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([])
     const router = useRouter()
@@ -66,15 +67,28 @@ const AddWorkOut = () => {
             router.push(`/UserPage/${newWorkout.id}`)
         }
     })
+
+    const {mutate:saveWorkout, isLoading:savingWorkout} = trpc.saveWorkout.useMutation({
+        onSuccess: () => {
+            setWorkoutSaved(true)
+        }
+    })
+
+    const saveChosenWorkout = () => {
+
+        const workoutname = selectedMuscleGroups.join("/")
+        saveWorkout({name: workoutname, exercise:selectedExercises})
+    }
     
     const form = useForm<z.infer<typeof FormSchema>>({
       resolver: zodResolver(FormSchema),
     })
-  
+    
     function onSubmit() {
         const workoutname = selectedMuscleGroups.join("/")
         mutate({name: workoutname, exercise: selectedExercises })
         setSelectedExercises([])
+        setWorkoutSaved(false)
     }
     return (
         <Dialog open={open} onOpenChange={(visible) => {
@@ -83,7 +97,7 @@ const AddWorkOut = () => {
             }
             }}>
             <DialogTrigger onClick={() => setOpen(true)} asChild>
-                <Button>Start a new workout</Button>
+                <Button size={"sm"}>Start a new workout</Button>
             </DialogTrigger>
        
             <DialogContent>            
@@ -185,8 +199,9 @@ const AddWorkOut = () => {
                             </Button>
                             ) 
                         }
-                        {slideState === 2 &&  !startingWorkout ?<div>
-                            <Button variant="outline" type="submit">Start your workout</Button>
+                        {slideState === 2 &&  !startingWorkout ? <div className="flex gap-2">
+                            {!savingWorkout ?<Button variant="outline" type="button" disabled={workoutSaved} onClick={saveChosenWorkout}>Save workout</Button> : <div className="flex justify-center"><Loader2 className="animate-spin w- h-4"></Loader2></div>}
+                            <Button variant="default" type="submit">Start your workout</Button>
                         </div> : (
                             startingWorkout && (
                                 <Loader2 className="animate-spin">Starting workout...</Loader2>
