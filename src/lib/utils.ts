@@ -17,7 +17,7 @@ export function absoluteUrl(path: string)  {
 export function constructMetadata({
 
   title = "SimpleGymTracker",
-  description ="SimpleGymTracker is a simple way keep track of your gym progress.",
+  description ="SimpleGymTracker is a simple way to keep track of your gym progress.",
   image = "",
   icons ="",
   noIndex = false
