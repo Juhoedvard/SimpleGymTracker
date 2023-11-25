@@ -54,7 +54,7 @@ const ExerciseChart = ({exercise} : ExerciseChartProps) => {
             <Line type="monotone" dataKey="volume" stroke="blue" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer> :
-        <div>
+        <div className="flex items-center">
           <Loader2 className="animate-spin">Fetching data...</Loader2>
         </div>}
       </>

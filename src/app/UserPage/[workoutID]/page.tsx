@@ -43,16 +43,17 @@ const Page = async ({params} : WorkoutProps) => {
                       {exercises && exercises.map((e) => {
                               return (
                                   <li key={e.id} className="flex divide-y divide-gray-200 rounded-lg bg-white shadow transition pb-4  ">
-                                      <div className="py-6 px-6 flex flex-col md:flex-row w-full items-center space-x-6 gap-4">
+                                      <div className="py-6 px-6 flex flex-col lg:flex-row w-full items-center space-x-6 gap-4">
                                           <div className="flex-1 truncate">
                                             <div className="flex items-center space-x-3">
                                               <h3 className="truncate text-lg font-medium pb-4 ">{e.exercise.name}</h3>
                                             </div>
                                           </div>
+                                          <div className="flex flex-col md:grid md:grid-cols-2 gap-2 lg:flex lg:flex-row">
                                           {e.sets.map((s) => {
                                               return(
-                                              <div key={s.id} className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow  ">
-                                                <div  className="flex flex-col justify-center items-center w-40 gap-4 p-4">
+                                              <div key={s.id} className="grid divide-y divide-gray-200 rounded-lg bg-white shadow  ">
+                                                <div  className="flex flex-col  justify-center items-center w-40 gap-4 p-4">
                                                     <p className="border-b">Set {s.sets +1}:</p>                
                                                     <p>{s.reps} reps </p>
                                                     <p>{s.weight} kg</p>
@@ -61,6 +62,7 @@ const Page = async ({params} : WorkoutProps) => {
                                               )
                                           })
                                         }
+                                      </div>
                                     </div>
                                   </li>
                               )
