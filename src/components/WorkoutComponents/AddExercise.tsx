@@ -15,9 +15,6 @@ import { DialogTitle } from "@radix-ui/react-dialog"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { useToast } from "../ui/use-toast"
-import { TRPCClientError } from "@trpc/client"
-
-
 
 
 interface ExerciseProps  {
@@ -42,7 +39,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
 
     const handleOpenDialog = () => {
         if(open){
-        const localSets = window.localStorage.getItem(`${exercise.name}sets`)
+        const localSets = window.localStorage.getItem(`${workoutExerciseID}name${exercise.name}sets`)
         if (localSets === null || parseInt(localSets) < 1) {
             setSets(3)
         }
@@ -51,7 +48,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         } 
         const localReps: {[index: number]: {reps: number, weight: number, finished: boolean}} = {}
         for (let i = 0; i < sets; i++) {
-            const rep = window.localStorage.getItem(`${exercise.name}set${i}`)
+            const rep = window.localStorage.getItem(`${workoutExerciseID}name${exercise.name}set${i}`)
             if (rep !== undefined && rep !== null && rep !== "undefined") {
                 localReps[i] = JSON.parse(rep)
                 }
@@ -99,7 +96,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         setReps((prevReps) => {
             const updatedFinished = {...prevReps}
             updatedFinished[index] = {...prevReps[index], finished: false}
-            window.localStorage.setItem(`${exercise.name}set${index}`, JSON.stringify(updatedFinished[index]))
+            window.localStorage.setItem(`${workoutExerciseID}name${exercise.name}set${index}`, JSON.stringify(updatedFinished[index]))
             return updatedFinished
     })
     }
@@ -109,7 +106,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         setReps((prevReps) => {
             const updatedReps = { ...prevReps }
             updatedReps[index] = { ...updatedReps[index], finished: true }
-            window.localStorage.setItem(`${exercise.name}set${index}`, JSON.stringify(updatedReps[index]))
+            window.localStorage.setItem(`${workoutExerciseID}name${exercise.name}set${index}`, JSON.stringify(updatedReps[index]))
             return updatedReps;
          })
         }
