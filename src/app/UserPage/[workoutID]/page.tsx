@@ -1,7 +1,6 @@
 
 import WorkOutOnProgress from "@/components/WorkoutComponents/WorkOutOnProgress"
 import { db } from "@/db"
-
 import { format } from "date-fns"
 import { notFound} from "next/navigation"
 

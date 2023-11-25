@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "../ui/dialog"
-
 import React from "react"
 import { Button } from "@/components/ui/button"
 import {  Check, Loader2, Plus, X } from "lucide-react"
@@ -31,12 +30,13 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
     const [sets, setSets] = useState<number>(3)
     const [reps, setReps] = useState<{[index : number] :{reps: number, weight: number, finished: boolean}}>({})
     const {toast} = useToast()
+
     useEffect(() => {
         if(open) {
             handleOpenDialog()
         }
     }, [open])
-
+    ///Fetch sets from localstorage if sets exist
     const handleOpenDialog = () => {
         if(open){
         const localSets = window.localStorage.getItem(`${workoutExerciseID}name${exercise.name}sets`)
@@ -56,7 +56,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         setReps(localReps)
         }
       }
-
+  ///Save to db
   const {mutate, isLoading: finishingExercise} = trpc.finishExercise.useMutation({
         onSuccess: () =>{
             setOpen(false)
@@ -69,7 +69,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
             })             
         }
     })
-
+    ///Add rep
     const updateRep = (index: number, updatedValue: number) => {
         setReps((prevReps) => {
           const updatedReps = { ...prevReps }
@@ -80,7 +80,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
           return updatedReps
         })
       }
-
+    ///Add weight
     const updateWeight = (index: number, updatedValue: number) => {
     setReps((prevReps) => {
         const updatedReps = { ...prevReps }
@@ -91,15 +91,17 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         return updatedReps
     })
     }
-
+    ///Change set status to not finished
     const changesSet = (index: number) => {
         setReps((prevReps) => {
             const updatedFinished = {...prevReps}
             updatedFinished[index] = {...prevReps[index], finished: false}
+            ///Change localstorage finished status to false
+            window.localStorage.setItem(`${workoutExerciseID}name${exercise.name}set${index}`, JSON.stringify(updatedFinished[index]))
             return updatedFinished
     })
     }
-
+    /// Add added rep to localstorage and validate that the user has given reps and weigh
     const addRep = (index: number, set : {reps: number, weight: number, finished: boolean}) => {
         if (set && !isNaN(set.reps) && set.reps > 0 && !isNaN(set.weight) && set.weight > 0) {
         setReps((prevReps) => {
@@ -118,7 +120,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
         }
 
     }
-
+    
     const finishExercise = () => {
         mutate({
             id: workoutExerciseID, 

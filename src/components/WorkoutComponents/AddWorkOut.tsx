@@ -47,9 +47,7 @@ const bodyparts = [
 ] as const
 
 const FormSchema = z.object({
-  bodyparts: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
+  bodyparts: z.array(z.string()).refine((value) => value.some((item) => item))
 })
 
 const AddWorkOut = () => {
@@ -61,6 +59,7 @@ const AddWorkOut = () => {
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([])
     const router = useRouter()
 
+    ///Create a new workout to db
     const {mutate, isLoading: startingWorkout} = trpc.startWorkOut.useMutation({
         onSuccess: (newWorkout) =>{
             setOpen(false)
@@ -68,12 +67,13 @@ const AddWorkOut = () => {
         }
     })
 
+    ///Save user's workout to db
     const {mutate:saveWorkout, isLoading:savingWorkout} = trpc.saveWorkout.useMutation({
         onSuccess: () => {
             setWorkoutSaved(true)
         }
     })
-
+    ///Save user's workout to db
     const saveChosenWorkout = () => {
 
         const workoutname = selectedMuscleGroups.join("/")
@@ -84,6 +84,7 @@ const AddWorkOut = () => {
       resolver: zodResolver(FormSchema),
     })
     
+    ///Submit form and start a workout
     function onSubmit() {
         const workoutname = selectedMuscleGroups.join("/")
         mutate({name: workoutname, exercise: selectedExercises })

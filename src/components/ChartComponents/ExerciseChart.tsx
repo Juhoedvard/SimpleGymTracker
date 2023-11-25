@@ -19,7 +19,7 @@ const ExerciseChart = ({exercise} : ExerciseChartProps) => {
           <></>
         )
     }
-
+    ///Calculating chart values
     const dailyData = data.map((workout) => {
 
       const sets = workout.sets.filter((set) => set.sets > 0)

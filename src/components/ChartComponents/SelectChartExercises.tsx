@@ -13,7 +13,7 @@ const SelectChartExercises = ({bodypart}: ChartProps) => {
 
     const [currentBodypart, setCurrentBodypart] = useState<string>("")
     const [selectedExercise, setSelectedExercise] = useState<string>('')
-    const {data: exercises, isLoading} = trpc.getExercises.useQuery({bodypart}, {enabled: !!bodypart})
+    const {data: exercises} = trpc.getExercises.useQuery({bodypart}, {enabled: !!bodypart})
     
     const [selected, setSelected] = useState<{ [index: number]: boolean }>(() => {
         const initialState: { [index: number]: boolean } = {}
@@ -23,6 +23,7 @@ const SelectChartExercises = ({bodypart}: ChartProps) => {
         return initialState
       })
 
+      ///Disabling the previous button when new button is selected
       useEffect(() => {
         if(bodypart !== currentBodypart){
             setSelectedExercise("")
@@ -36,7 +37,8 @@ const SelectChartExercises = ({bodypart}: ChartProps) => {
             })
         }
       }, [bodypart, exercises])
-
+    
+      ///Select chart data
     const selectChartData = (index: number, exercise: string) => {
         setSelected((prevSelected) => {
             const updatedBoolean = { ...prevSelected }

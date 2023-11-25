@@ -26,6 +26,7 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
     const router = useRouter()
     const utils = trpc.useUtils()
     const {toast} = useToast()
+    ///Finish workout
     const {mutate, isLoading: workOutLoading} = trpc.finishWorkout.useMutation({
         onSuccess: () => {
             localStorage.clear()
@@ -42,6 +43,7 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
             })
         },
     })
+    ///Finish workout
     const finishWorkout = () => {
         workoutExercises.map((exercise) => {
             if(exercise.sets.length < 1){

@@ -29,9 +29,8 @@ type SavedWorkout = {
 
 const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
 
-    console.log(savedWorkouts)
+
     const [open, setOpen] = useState<boolean>(false)
-    const [SelectedWorkout, setSelectedWorkout] = useState<SavedWorkout[] | null>(null)
     const [selectSavedWorkout, setSelectSavedWorkout] = useState<SavedWorkout | null>(null)
     const [selected, setSelected] = useState<{ [id: string]: boolean }>({})
     const {toast} = useToast()
@@ -42,6 +41,7 @@ const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
             router.push(`/UserPage/${newWorkout.id}`)
         }
     })
+    ///Choose existing workout and display exercises to user
     const ChooseWorkout = (SavedWorkout: SavedWorkout) => {
       
         setSelectSavedWorkout(SavedWorkout)
@@ -57,7 +57,7 @@ const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
           })
 
     }
-    
+    ///Start chosen workout
     const StartWorkout = () => {
         if(selectSavedWorkout){
             const exercises = selectSavedWorkout.exercises.map((e) =>({id:  e.id}))
@@ -66,9 +66,7 @@ const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
         })
         }
         setSelectSavedWorkout(null)
-
     }
-
 
     return (
         <Dialog open={open} onOpenChange={(visible) => {
