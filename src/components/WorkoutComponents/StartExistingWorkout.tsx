@@ -92,7 +92,7 @@ const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
                     </DialogHeader>
                     <div className="flex justify-between items-center">
                         <div>
-                            <ul className="flex flex-col mt-8 gap-6 divide-zinc-200">
+                            <ul className="grid grid-cols-2 mt-8 gap-6 divide-zinc-200">
                             {savedWorkouts.map((workout) => (
                                 <Button variant={!selected[workout.id] ? "ghost" : "default"} key={workout.id} onClick={() => ChooseWorkout( workout)} className="divide-y divide-gray-200 rounded-lg  shadow transition hover:shadow-lg p-4 ">
                                     <p className="text-sm">{workout.name}</p>

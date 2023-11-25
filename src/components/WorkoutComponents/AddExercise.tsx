@@ -92,17 +92,16 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
     })
     }
 
-    const repFinished = (index: number) => {
+    const changesSet = (index: number) => {
         setReps((prevReps) => {
             const updatedFinished = {...prevReps}
             updatedFinished[index] = {...prevReps[index], finished: false}
-            window.localStorage.setItem(`${workoutExerciseID}name${exercise.name}set${index}`, JSON.stringify(updatedFinished[index]))
             return updatedFinished
     })
     }
 
     const addRep = (index: number, set : {reps: number, weight: number, finished: boolean}) => {
-        if (!isNaN(set.reps) && set.reps > 0 && !isNaN(set.weight) && set.weight > 0) {
+        if (set && !isNaN(set.reps) && set.reps > 0 && !isNaN(set.weight) && set.weight > 0) {
         setReps((prevReps) => {
             const updatedReps = { ...prevReps }
             updatedReps[index] = { ...updatedReps[index], finished: true }
@@ -191,7 +190,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
                                             <span> {reps[index].weight}</span>
                                         </div>
                                         
-                                    <Button variant={"ghost"} onClick={() => repFinished(index)}><Check color="green" /></Button>
+                                    <Button variant={"ghost"} onClick={() => changesSet(index)}><Check color="green" /></Button>
                                     </div>
                                 
                                     }
