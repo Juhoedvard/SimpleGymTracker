@@ -9,7 +9,7 @@
   soon.
   I used following frameworks:
 - [Next.js](https://nextjs.org)
-- [Kinde]([https://next-auth.js.org](https://kinde.com/)) 
+- [Kinde](https://kinde.com/)
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Shadcn](https://ui.shadcn.com/)
@@ -17,4 +17,8 @@
 - [zod](https://zod.dev/?id=table-of-contents) 
 - [PlanetScale](https://planetscale.com/)
 
+
+Project is deployed at: https://simple-gym-tracker.vercel.app/
+I created a test user you can use to sign in. Username/Email: sgttestaaja@gmail.com, password sgttestaaja
+Test user has premade workouts created to so you can test the site.
 
