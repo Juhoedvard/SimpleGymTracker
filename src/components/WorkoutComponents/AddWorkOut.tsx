@@ -54,7 +54,7 @@ const FormSchema = z.object({
       }),
 })
 type AddWorkoutprops = {
-    workoutId: string,
+    workoutId?: string,
     bodypart?: string,
     workoutExercises?: workoutExercises[]
 }
@@ -147,7 +147,7 @@ const AddWorkOut = ({workoutId, bodypart, workoutExercises}: AddWorkoutprops) =>
                         </FormItem>
                     )}
 
-                    {bodypart ? !AddExerciseLoading ? <Button variant="default" type="button" onClick={() => AddExercise({id: workoutId, exercise: selectedExercises})}>Add</Button> : <Loader2 className="animate-spin w-4 h-4"/> : 
+                    {bodypart ? !AddExerciseLoading && workoutId ? <Button variant="default" type="button" onClick={() => AddExercise({id: workoutId, exercise: selectedExercises})}>Add</Button> : <Loader2 className="animate-spin w-4 h-4"/> : 
                      <div className={slideState === 1 ? "flex w-full justify-end px-4" : "flex w-full justify-between px-5"}>
                         {slideState !== 1 && 
                             <Button variant="outline" size="icon" type="button"
