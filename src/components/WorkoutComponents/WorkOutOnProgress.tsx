@@ -4,8 +4,13 @@ import AddExercise from "./AddExercise"
 import { Button } from "../ui/button"
 import { trpc } from "@/app/_trpc/client"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2, X } from "lucide-react"
 import { useToast } from "../ui/use-toast"
+
+import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip"
+import { Tooltip, TooltipTrigger } from "../ui/tooltip"
+
+import AddWorkOut from "./AddWorkOut"
 
 
 type WorkOutOnProgressProps ={
@@ -21,7 +26,7 @@ type workoutExercises = {
     exercise: Exercise 
     sets: Set[]
   }
-
+///router.refresh() is temporary fix until I figure out something beter
 const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps) => {
 
     const router = useRouter()
@@ -30,8 +35,9 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
 
     ///Finish workout
     const {mutate, isLoading: workOutLoading} = trpc.finishWorkout.useMutation({
-        onSuccess: (input) => {
-            localStorage.clear()   
+        onSuccess: () => {
+            localStorage.clear()
+            utils.getUserWorkouts.invalidate()   
             router.push("/UserPage")
             return toast({
                 title: "Workout finished, great job 🔥! "
@@ -44,6 +50,14 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
                 title: `Something went wrong ${error}`
             })
         },
+    })
+    const {mutate:removeExercise, isLoading: removeLoading} = trpc.removeExercise.useMutation({
+        onSuccess: () => {
+            router.refresh()
+            toast({
+                title:`Exercise removed succesfully`
+            })
+        }
     })
     ///Finish workout
     const finishWorkout = () => {
@@ -64,6 +78,16 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
                                 </div>
                             </div>
                             <AddExercise exercise={e.exercise} finished={e.finished} workoutExerciseID={e.id}/>
+                            <TooltipProvider>
+                                 <Tooltip >
+                                    <TooltipTrigger asChild>                            
+                                        {!removeLoading ? <X className="w-4 h-4" onClick={() => removeExercise({id: e.id})}/> : <Loader2 className="animate-spin"/>}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Remove exercise
+                                    </TooltipContent>
+                             </Tooltip>     
+                            </TooltipProvider> 
                         </div>            
                         </li>       
                       </ul>                         
@@ -71,9 +95,10 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
                 )
             })}
             </div>
-            <div className=" flex justify-center items-center py-2 gap-4">
- 
-                {!workOutLoading ?<Button variant="outline" size={"lg"}  className="text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishWorkout()}>Finish workout</Button> 
+            <div className=" flex  justify-center items-center py-2 gap-4">
+                <AddWorkOut workoutId={workout.id} bodypart={workout.name} workoutExercises={workoutExercises}/>
+                {!workOutLoading ?
+                <Button variant="outline" size={"lg"}  className="text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishWorkout()}>Finish workout</Button> 
                 : <Loader2 className="animate-spin">Finishing workout...</Loader2>    
                 }
                 

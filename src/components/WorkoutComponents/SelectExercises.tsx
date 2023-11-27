@@ -9,22 +9,37 @@ import {
 } from "@/components/ui/form"
 import { trpc } from "@/app/_trpc/client"
 import { Loader2 } from "lucide-react"
+import { Set } from "@prisma/client"
 
 
-interface bodypartProps {
+type bodypartProps = {
     bodypart: string 
-    selectedExercises: Exercise[]
+    selectedExercises: Exercise[],
+    workoutExercises?: workoutExercises[]
 
     }
 type Exercise = {
     id: string
 
 }
-const SelectExercises = ({bodypart,  selectedExercises} : bodypartProps) => {
+type workoutExercises = {
+  id: string
+  workoutId: string
+  exerciseId: string
+  finished: boolean
+  exercise: Exercise 
+  sets: Set[]
+}
+const SelectExercises = ({bodypart,  selectedExercises, workoutExercises} : bodypartProps) => {
   
   const {data: exercises, isLoading} = trpc.getExercises.useQuery({bodypart})
+  console.log(workoutExercises)
+  console.log(exercises)
   if (isLoading) return <Loader2 className="animate-spin h-4 w-4"></Loader2>
 
+  const filteredExercises = exercises?.filter((e) => !workoutExercises?.some((we) => we.exerciseId === e.id))
+  const newExercises = workoutExercises ? filteredExercises : exercises
+  console.log(exercises)
   return (
         <FormField
           name="exercises"
@@ -33,7 +48,8 @@ const SelectExercises = ({bodypart,  selectedExercises} : bodypartProps) => {
               <div className="flex w-full mb-4 justify-between">
                 <FormLabel className="text-base">{bodypart}:</FormLabel>
               </div>
-              {exercises?.map((ex) => (
+              
+              {newExercises?.map((ex) => (
                 <FormField
                   key={ex.id}
 

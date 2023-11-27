@@ -33,7 +33,18 @@ export const appRouter = router({
         return {success: true}
 
     }),
-
+    getUserWorkout: privateProcedure
+    .input(z.object({id: z.string()}))
+    .query(async({input}) => {
+        const workout = await db.workOut.findFirst({
+            where:
+            {
+                id: input.id
+            }
+        })
+        if(!workout) throw new TRPCError({code: "NOT_FOUND"})
+        return workout
+    }),
     getUserWorkouts: privateProcedure
     .query(async ({ctx}) => {
         const {userId} = ctx 
@@ -57,9 +68,12 @@ export const appRouter = router({
     getExercises: publicProcedure
         .input(z.object({bodypart: z.string()}))
         .query(async({input}) => {
+            const bodyparts = input.bodypart.split("/")
             const exercises =  db.exercise.findMany({
                  where : {
-                gategory: input.bodypart
+                    OR : bodyparts.map((bodypart) => ({
+                        gategory: {contains: bodypart}
+                    }))
             }
             })
             if (!exercises) throw new TRPCError({code: 'NOT_FOUND'})
@@ -92,8 +106,34 @@ export const appRouter = router({
                   },
                 },
               })
-              return newWorkout
+              return newWorkout.id
         }),
+    addExercises: privateProcedure
+    .input(z.object({
+        id: z.string(),
+        exercise: z.array(z.object({
+            id: z.string()
+        }))
+    }))
+    .mutation(async ({input, ctx}) => {
+        await db.workOut.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                WorkoutExercises: {
+                    createMany: {
+                        data: input.exercise.map((exerciseData) => ({
+                            userId: ctx.userId,
+                            exerciseId: exerciseData.id
+                        }))
+                    }
+                }
+            }
+            
+        })
+        return input.id
+    }),
     saveWorkout: privateProcedure
         .input(z.object({
             name: z.string(),
@@ -166,6 +206,15 @@ export const appRouter = router({
         return finishedWorkout
             
 
+    }),
+    removeExercise: privateProcedure
+    .input(z.object({id: z.string()}))
+    .mutation(async ({input}) => {
+        await db.workoutExercises.delete({
+            where: {
+                id: input.id
+            }
+        })
     }),
     userChartData: privateProcedure
     .input(z.object({exercise: z.string()}))

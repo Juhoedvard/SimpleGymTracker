@@ -10,20 +10,21 @@ const Page = async () => {
 
     const {getUser} = getKindeServerSession()
     const user = getUser()
-    redirect("/")
-  /* if(!user.id || user.given_name !== "Testi"){
+    ///redirect("/")
+   if(!user.id || user.given_name !== "Testi"){
       redirect("/")
   }
-    if(!user.id){
+   /* if(!user.id){
     return
     }    
     await RemoveOneWorkout(user.id)
-    
     await RemoveTestWorkouts(user.id)
+   
     await CreateTestWorkouts(user.id)
     await ConnectExercises(user.id)
     await ConnecSets(user.id)*/
-
+    
+ 
 
     return (
         <main className="mx-auto p-4 max-w-7xl md:p-10">

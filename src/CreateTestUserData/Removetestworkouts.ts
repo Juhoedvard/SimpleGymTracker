@@ -7,10 +7,19 @@ export async function RemoveTestWorkouts(id: string) {
     ///Remove testworkouts if needed
     if(id){
 
+        await db.set.deleteMany({
+            where: {
+                // Voit muuttaa tätä ehtoa vastaamaan liitostasi SetToWorkoutExercises
+                exercise: {
+                    userId: id
+                }
+                
+            }
+        });
         await db.workoutExercises.deleteMany({
             where: {
                 userId: id
-            }
+            },
         })
         await db.workOut.deleteMany({
             where: {

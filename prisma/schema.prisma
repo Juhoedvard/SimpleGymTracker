@@ -52,8 +52,8 @@ model Exercise {
   gategory         String
   workoutId        String?
   WorkoutExercises WorkoutExercises[]
-  savedWorkout     SavedWorkout       @relation(fields: [savedWorkoutId], references: [id])
-  savedWorkoutId   String             @default("")
+  savedWorkout     SavedWorkout?       @relation(fields: [savedWorkoutId], references: [id])
+  savedWorkoutId   String?      @default("")
 
   @@index([savedWorkoutId])
   @@index([workoutId])
@@ -77,7 +77,7 @@ model WorkoutExercises {
   exercise        Exercise @relation(fields: [exerciseId], references: [id])
   user            User     @relation(fields: [userId], references: [id]) 
   userId          String  
-  exerciseId      String
+  exerciseId      String   
   sets            Set[]
   finished        Boolean  @default(false)
 

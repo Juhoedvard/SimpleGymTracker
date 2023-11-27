@@ -7,20 +7,22 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   Form,
-  FormControl,
   FormDescription,
-  FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+
 } from "@/components/ui/form"
 import { ChevronLeftIcon, ChevronRightIcon, Loader2 } from "lucide-react"
 import SelectExercises from "./SelectExercises"
 import { trpc } from "@/app/_trpc/client"
 import { useRouter } from "next/navigation"
+import SelectBodyPart from "./SelectBodyPart"
+import { useToast } from "../ui/use-toast"
+import {  Set } from "@prisma/client"
+
+
 
 type Exercise = {
     id: string
@@ -44,26 +46,47 @@ const bodyparts = [
     label: "Arms",
   },
 
-] as const
+] 
 
 const FormSchema = z.object({
-  bodyparts: z.array(z.string()).refine((value) => value.some((item) => item))
+    bodyparts: z.array(z.string()).refine((value) => value.length > 0, {
+        message: 'At least one bodypart must be selected',
+      }),
 })
-
-const AddWorkOut = () => {
+type AddWorkoutprops = {
+    workoutId: string,
+    bodypart?: string,
+    workoutExercises?: workoutExercises[]
+}
+type workoutExercises = {
+    id: string
+    workoutId: string
+    exerciseId: string
+    finished: boolean
+    exercise: Exercise 
+    sets: Set[]
+  }
+const AddWorkOut = ({workoutId, bodypart, workoutExercises}: AddWorkoutprops) => {
 
     const [open, setOpen] = useState<boolean>(false)
-    const [slideState, setSlideState] = useState<number>(1)
+    const [slideState, setSlideState] = useState<number>(!bodypart ? 1 : 2)
     const [workoutSaved, setWorkoutSaved] = useState<boolean>(false)
-    const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([])
+    const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>(!bodypart ?[] : [bodypart])
     const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([])
     const router = useRouter()
+    const {toast} = useToast()
 
     ///Create a new workout to db
     const {mutate, isLoading: startingWorkout} = trpc.startWorkOut.useMutation({
-        onSuccess: (newWorkout) =>{
+        onSuccess: (id) =>{
             setOpen(false)
-            router.push(`/UserPage/${newWorkout.id}`)
+            router.push(`/UserPage/${id}`)
+        }
+    })
+    const {mutate: AddExercise, isLoading: AddExerciseLoading} = trpc.addExercises.useMutation({
+        onSuccess: () => {
+                setOpen(false)
+                router.refresh() 
         }
     })
 
@@ -79,8 +102,8 @@ const AddWorkOut = () => {
         const workoutname = selectedMuscleGroups.join("/")
         saveWorkout({name: workoutname, exercise:selectedExercises})
     }
-    
-    const form = useForm<z.infer<typeof FormSchema>>({
+
+    const form = useForm({
       resolver: zodResolver(FormSchema),
     })
     
@@ -98,73 +121,19 @@ const AddWorkOut = () => {
             }
             }}>
             <DialogTrigger onClick={() => setOpen(true)} asChild>
-                <Button size={"sm"}>Start a new workout</Button>
+                <Button size={workoutId ? "lg" : "sm"}>{!workoutId ? "Start a new workout" : "Add exercise"}</Button>
             </DialogTrigger>
        
             <DialogContent >            
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                  { slideState === 1 ?  (
-                 <FormField
-                    control={form.control}
-                    name="bodyparts"
-                    render={() => (
+                    <SelectBodyPart bodyparts={bodyparts} form={form} setSelectedMuscleGroups={setSelectedMuscleGroups}/>
+                 ) : slideState === 2 && (
                         <FormItem>
-                        <div className="mb-4">
-                            <FormLabel className="text-base">     
-                                   Workout
-                            </FormLabel>
-                            <FormDescription>
-                            Select the bodyparts you are doing in the workout.
-                            </FormDescription>
-                        </div>
-                        {bodyparts.map((item) => (
-                            <FormField
-                            key={item.id}
-                            control={form.control}
-                            name="bodyparts"
-                            render={({ field }) => {
-                                return (
-                                <FormItem
-                                    key={item.id}
-                                    className="flex flex-row bodyparts-start space-x-3 space-y-0"
-                                >
-                                    <FormControl>
-                                    <Checkbox
-                                        checked={Array.isArray(field.value) && field.value?.includes(item.id)}
-                                        onCheckedChange={(checked) => {
-                                            const newValue = Array.isArray(field.value) ? [...field.value] : []
-                                            if (checked) {
-                                            newValue.push(item.id)
-                                            } else {
-                                            const index = newValue.indexOf(item.id)
-                                            if (index !== -1) {
-                                                newValue.splice(index, 1)
-                                            }
-                                            }
-                                            setSelectedMuscleGroups(newValue)
-                                            field.onChange(newValue)
-                                        }}
-                                    />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal">
-                                    {item.label}
-                                    </FormLabel>
-                                </FormItem>
-                                )
-                            }}
-                            />
-                        ))}
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />) : slideState === 2 && (
-                        <FormItem>
-                             <div className="mb-4 ">
+                             <div className="mb-4">
                                 <FormLabel className="flex w-full justify-between text-base pr-5 pt-5 ">
-                                    <h3>
-                                        Workout
-                                    </h3>             
+                                    Workout           
                                     </FormLabel>
                                 <FormDescription > 
                                     Select your exercises.                                      
@@ -172,15 +141,15 @@ const AddWorkOut = () => {
                             </div>
                             <div className={selectedMuscleGroups.length < 2 ? "flex items-start" : "flex justify-evenly"}>
                             {selectedMuscleGroups.map((muscle) => (
-                                <SelectExercises key={muscle} bodypart = {muscle} selectedExercises={selectedExercises}/>
+                                <SelectExercises key={muscle} bodypart = {muscle} selectedExercises={selectedExercises} workoutExercises={workoutExercises}/>
                             ))}
                             </div>
                         </FormItem>
                     )}
 
-                    <div className={slideState === 1 ? "flex w-full justify-end px-4" : "flex w-full justify-between px-5"}>
-                        {slideState !== 1 &&
-                            
+                    {bodypart ? !AddExerciseLoading ? <Button variant="default" type="button" onClick={() => AddExercise({id: workoutId, exercise: selectedExercises})}>Add</Button> : <Loader2 className="animate-spin w-4 h-4"/> : 
+                     <div className={slideState === 1 ? "flex w-full justify-end px-4" : "flex w-full justify-between px-5"}>
+                        {slideState !== 1 && 
                             <Button variant="outline" size="icon" type="button"
                             onClick={() => setSlideState(slideState -1)}
                             >
@@ -190,9 +159,9 @@ const AddWorkOut = () => {
                             </Button>
                         
                             } 
-                            {slideState === 1 && (        
+                        {slideState === 1 && (        
                             <Button variant="outline" size="icon" type="button"
-                                onClick={() => setSlideState(slideState +1)}
+                                onClick={() =>{form.formState.isValid ?  setSlideState(slideState +1) :  toast({title:"Please choose atleast one bodypart to continue.", variant:"destructive"})}}
                                 >
                                 <div className="w-4 h-4">
                                     <ChevronRightIcon />
@@ -200,15 +169,17 @@ const AddWorkOut = () => {
                             </Button>
                             ) 
                         }
-                        {slideState === 2 &&  !startingWorkout ? <div className="flex gap-2 pr-4">
+                        {slideState === 2 &&  !startingWorkout ?
+                         <div className="flex gap-2 pr-4">
                             {!savingWorkout ?<Button variant="outline" type="button" disabled={workoutSaved} onClick={saveChosenWorkout}>Save workout</Button> : <div className="flex justify-center items-center"><Loader2 className="animate-spin w- h-4"></Loader2></div>}
                             <Button variant="default" type="submit">Start your workout</Button>
-                        </div> : (
+                        </div> 
+                        :(
                             startingWorkout && (
                                 <Loader2 className="animate-spin">Starting workout...</Loader2>
                             )
                         )}
-                    </div>
+                    </div> }
                 </form>
             </Form>
         </DialogContent>
