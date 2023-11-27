@@ -36,9 +36,9 @@ const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
     const {toast} = useToast()
     const router = useRouter()
     const {mutate, isLoading: startingWorkout} = trpc.startWorkOut.useMutation({
-        onSuccess: (newWorkout) => {
+        onSuccess: (id) => {
             setOpen(false)
-            router.push(`/UserPage/${newWorkout.id}`)
+            router.push(`/UserPage/${id}`)
         }
     })
     ///Choose existing workout and display exercises to user
