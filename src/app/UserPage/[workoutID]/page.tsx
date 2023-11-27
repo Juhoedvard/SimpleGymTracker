@@ -27,6 +27,7 @@ const Page = async ({params} : WorkoutProps) => {
           }
         },
       })
+
    
     if (!workout) notFound()
     const exercises = workout?.WorkoutExercises.map((exercises) => (exercises))
@@ -40,7 +41,7 @@ const Page = async ({params} : WorkoutProps) => {
                     <div>
                     {workout.finished ?
                       <ul className="mt-8 flex flex-col gap-8 md:gap-4 sm:gap-2 divide-zinc-200 ">
-                      {exercises && exercises.map((e) => {
+                      {exercises ? exercises.map((e) => {
                               return (
                                   <li key={e.id} className="flex divide-y divide-gray-200 rounded-lg bg-white shadow transition pb-4  ">
                                       <div className="py-6 px-6 flex flex-col lg:flex-row w-full items-center space-x-6 gap-4">
@@ -66,7 +67,7 @@ const Page = async ({params} : WorkoutProps) => {
                                     </div>
                                   </li>
                               )
-                          })}
+                          }) : <div>No exercises</div>}
                       </ul> : exercises && 
                       <WorkOutOnProgress workout={workout} workoutExercises={exercises} />}
                     </div>

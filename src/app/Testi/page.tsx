@@ -1,7 +1,7 @@
 
 import { ConnecSets, ConnectExercises } from "@/CreateTestUserData/ConnectExercises";
 import { CreateTestWorkouts } from "@/CreateTestUserData/createtestworkouts";
-import { RemoveTestWorkouts } from "@/CreateTestUserData/Removetestworkouts";
+import { RemoveOneWorkout, RemoveTestWorkouts } from "@/CreateTestUserData/Removetestworkouts";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -10,14 +10,19 @@ const Page = async () => {
 
     const {getUser} = getKindeServerSession()
     const user = getUser()
-    if(!user.id || user.given_name !== "Testi"){
-        redirect("/")
-    }
-
-    /// await RemoveTestWorkouts(user.id)
+    redirect("/")
+  /* if(!user.id || user.given_name !== "Testi"){
+      redirect("/")
+  }
+    if(!user.id){
+    return
+    }    
+    await RemoveOneWorkout(user.id)
+    
+    await RemoveTestWorkouts(user.id)
     await CreateTestWorkouts(user.id)
     await ConnectExercises(user.id)
-    await ConnecSets(user.id)
+    await ConnecSets(user.id)*/
 
 
     return (

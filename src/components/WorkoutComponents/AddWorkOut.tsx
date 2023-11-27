@@ -201,7 +201,7 @@ const AddWorkOut = () => {
                             ) 
                         }
                         {slideState === 2 &&  !startingWorkout ? <div className="flex gap-2 pr-4">
-                            {!savingWorkout ?<Button variant="outline" type="button" disabled={workoutSaved} onClick={saveChosenWorkout}>Save workout</Button> : <div className="flex justify-center"><Loader2 className="animate-spin w- h-4"></Loader2></div>}
+                            {!savingWorkout ?<Button variant="outline" type="button" disabled={workoutSaved} onClick={saveChosenWorkout}>Save workout</Button> : <div className="flex justify-center items-center"><Loader2 className="animate-spin w- h-4"></Loader2></div>}
                             <Button variant="default" type="submit">Start your workout</Button>
                         </div> : (
                             startingWorkout && (

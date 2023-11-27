@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "../ui/dialog"
 import React from "react"
 import { Button } from "@/components/ui/button"
@@ -61,7 +61,8 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
             setOpen(false)
             setFinished(true)
         },
-        onError: (error) => {       
+        onError: (error) => { 
+                console.log(error)      
                 return toast({
                 variant: "destructive",
                 title: `Something went wrong! Make sure that you have applied weight and reps for each set`
@@ -100,6 +101,22 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
             return updatedFinished
     })
     }
+    ///Change set count
+    const handleRemoveSet = () => {
+        setSets(prevSets => {
+          const newSets = prevSets - 1;
+          window.localStorage.setItem(`${workoutExerciseID}name${exercise.name}sets`, JSON.stringify(newSets));
+          return newSets
+        })
+      }
+
+    const handleAddSet = () => {
+        setSets(prevSets => {
+            const newSets = prevSets +1
+            window.localStorage.setItem(`${workoutExerciseID}name${exercise.name}sets`, JSON.stringify(newSets))
+            return newSets
+        })
+    }
     /// Add added rep to localstorage and validate that the user has given reps and weigh
     const addRep = (index: number, set : {reps: number, weight: number, finished: boolean}) => {
         if (set && !isNaN(set.reps) && set.reps > 0 && !isNaN(set.weight) && set.weight > 0) {
@@ -120,6 +137,15 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
     }
     ///Add finished exercise to db.
     const finishExercise = () => {
+        const AllSetsProvided = Object.keys(reps).length === sets
+          
+        if(!AllSetsProvided){
+            toast({
+                variant:"destructive",
+                title:"Please finish all the sets or remove extra sets"
+            })
+             return
+        }
         mutate({
             id: workoutExerciseID, 
             sets: Object.keys(reps).map((index) => ({
@@ -148,10 +174,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
                         Add your sets and reps 
                             <Tooltip>
                                 <TooltipTrigger asChild>                            
-                                        <Plus className="w-4 h-4" onClick={() => {
-                                            setSets(sets +1)
-                                            window.localStorage.setItem(`${exercise.name}sets`, JSON.stringify(sets +1))
-                                            }}/>
+                                        <Plus className="w-4 h-4" onClick={handleAddSet}/>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     Add a new set
@@ -162,7 +185,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
                 <div className="flex flex-col justify-evenly px-2 gap-4">
                     {Array(sets).fill(null).map((_, index)=> {
                         return(
-                           <AddSet key={index} index={index} reps={reps} updateRep={updateRep} updateWeight={updateWeight} addRep={addRep} changesSet={changesSet} sets={sets} setSets={setSets}/> 
+                           <AddSet key={index} index={index} reps={reps} updateRep={updateRep} updateWeight={updateWeight} addRep={addRep} changesSet={changesSet} sets={sets} setSets={setSets}  handleRemoveSet={handleRemoveSet}/> 
                         )
                 })}
                     <DialogFooter className="flex justify-end pt-4">

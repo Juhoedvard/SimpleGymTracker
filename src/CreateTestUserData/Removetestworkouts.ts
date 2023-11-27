@@ -32,3 +32,27 @@ export async function RemoveTestWorkouts(id: string) {
 
     
 }
+
+
+export async function RemoveOneWorkout(id: string) {
+
+    ///Remove testworkouts if needed
+    if(id){
+        await db.workoutExercises.deleteMany({
+            where: {
+                workoutId: "clpe3xprm0008gjd4lq33891z"
+            }
+        })
+        await db.workOut.deleteMany({
+            where: {
+                id: "clpe3xprm0008gjd4lq33891z"
+            }
+        })
+
+
+
+    }
+
+    return console.log('removed')
+
+}

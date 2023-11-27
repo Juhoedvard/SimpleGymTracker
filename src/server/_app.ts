@@ -3,6 +3,7 @@ import { router, publicProcedure, privateProcedure} from "./trpc";
 import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 
 
@@ -122,7 +123,7 @@ export const appRouter = router({
                 reps: z.number().min(1, {message: "You must have done atleast one rep"}),
                 weight: z.number().min(1, {message: "Please add your weight"}),
                 sets: z.number()
-            })).min(1)
+            }))
         }))
         .mutation(async ({input}) => {
 
@@ -144,7 +145,7 @@ export const appRouter = router({
                     sets: true
                 }
             })
-            if(finishedExercise.sets.length < 2) throw new TRPCError({code: "INTERNAL_SERVER_ERROR"})
+            if(finishedExercise.sets.length < 1) throw new TRPCError({code: "INTERNAL_SERVER_ERROR"})
             return finishedExercise
         }),
 
@@ -161,9 +162,9 @@ export const appRouter = router({
                 }
         })
         if (!finishedWorkout) throw new TRPCError({code: "INTERNAL_SERVER_ERROR"})
-        else {
-            return finishedWorkout
-            }
+        revalidatePath("/UserPage")
+        return finishedWorkout
+            
 
     }),
     userChartData: privateProcedure

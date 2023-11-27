@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { useToast } from "../ui/use-toast"
 
+
 type WorkOutOnProgressProps ={
     workout: WorkOut
     workoutExercises: workoutExercises[]
@@ -26,17 +27,18 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
     const router = useRouter()
     const utils = trpc.useUtils()
     const {toast} = useToast()
+
     ///Finish workout
     const {mutate, isLoading: workOutLoading} = trpc.finishWorkout.useMutation({
-        onSuccess: () => {
-            localStorage.clear()
+        onSuccess: (input) => {
+            localStorage.clear()   
             router.push("/UserPage")
-            utils.getUserWorkouts.invalidate() 
             return toast({
                 title: "Workout finished, great job 🔥! "
             })
         },
         onError(error) {
+            console.log(error)
             return toast({
                 variant: "destructive",
                 title: `Something went wrong ${error}`
@@ -45,17 +47,7 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
     })
     ///Finish workout
     const finishWorkout = () => {
-        workoutExercises.map((exercise) => {
-            if(exercise.sets.length < 1){
-                toast({
-                    variant:"destructive",
-                    title: "You need to add atleast one set to each exercise"
-                })
-            }
-            else {
-                 mutate({id: workout.id })
-            }
-        })
+        mutate({id: workout.id })        
     }
     return(
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -79,10 +71,12 @@ const WorkOutOnProgress = ({ workout, workoutExercises}: WorkOutOnProgressProps)
                 )
             })}
             </div>
-            <div className=" flex justify-center items-center py-2">
+            <div className=" flex justify-center items-center py-2 gap-4">
+ 
                 {!workOutLoading ?<Button variant="outline" size={"lg"}  className="text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishWorkout()}>Finish workout</Button> 
                 : <Loader2 className="animate-spin">Finishing workout...</Loader2>    
                 }
+                
             </div>
         </div>      
     )
