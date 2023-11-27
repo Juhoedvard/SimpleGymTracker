@@ -10,7 +10,6 @@ interface ExerciseChartProps {
   
 }
 
-
 const ExerciseChart = ({exercise} : ExerciseChartProps) => {
     
     const {data, isLoading} = trpc.userChartData.useQuery({exercise})

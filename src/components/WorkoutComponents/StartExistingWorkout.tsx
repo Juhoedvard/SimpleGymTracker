@@ -119,7 +119,6 @@ const StartExistingWorkout = ({savedWorkouts} : StartExistingWorkoutProps) => {
                             )
                         )}
                         </div>
-          
                 </DialogContent>
         </Dialog>
     )

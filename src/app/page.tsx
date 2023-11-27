@@ -9,10 +9,10 @@ export default function Home() {
   return (
     <>
     <MaxWidthWrapper className="mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center">
-      <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
+      <h1 className="max-w-4xl text-4xl font-bold md:text-6xl lg:text-7xl p-4">
         Start your gym tracking now with <span className="text-blue-600">SimpleGymTracker</span>
       </h1>
-      <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
+      <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg pl-4">
         SimpleGymTracker works as training diary. You can keep track of your gym progress including what weighs you have used and how many sets you have done. You can also get an access to charts about your workouts
       </p>
       {/*Vaihda tämä */}

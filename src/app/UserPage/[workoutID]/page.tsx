@@ -32,7 +32,7 @@ const Page = async ({params} : WorkoutProps) => {
     const exercises = workout?.WorkoutExercises.map((exercises) => (exercises))
 
     return ( 
-        <main className="mx-auto max-w-7xl md:p-10">
+        <main className="mx-auto max-w-7xl px-5 ">
                     <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center ">
                         <h1 className="mb-3 font-bold text-3xl md:text-5xl">{workout.name} day: </h1>
                         <p>{format(new Date(workout.date), "eeee  dd/MM/yyyy")}</p>

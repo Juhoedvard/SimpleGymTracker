@@ -101,7 +101,7 @@ const AddWorkOut = () => {
                 <Button size={"sm"}>Start a new workout</Button>
             </DialogTrigger>
        
-            <DialogContent>            
+            <DialogContent >            
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                  { slideState === 1 ?  (
@@ -178,7 +178,7 @@ const AddWorkOut = () => {
                         </FormItem>
                     )}
 
-                    <div className={slideState === 1 ? "flex w-full justify-end" : "flex w-full justify-between"}>
+                    <div className={slideState === 1 ? "flex w-full justify-end px-4" : "flex w-full justify-between px-5"}>
                         {slideState !== 1 &&
                             
                             <Button variant="outline" size="icon" type="button"
@@ -200,7 +200,7 @@ const AddWorkOut = () => {
                             </Button>
                             ) 
                         }
-                        {slideState === 2 &&  !startingWorkout ? <div className="flex gap-2">
+                        {slideState === 2 &&  !startingWorkout ? <div className="flex gap-2 pr-4">
                             {!savingWorkout ?<Button variant="outline" type="button" disabled={workoutSaved} onClick={saveChosenWorkout}>Save workout</Button> : <div className="flex justify-center"><Loader2 className="animate-spin w- h-4"></Loader2></div>}
                             <Button variant="default" type="submit">Start your workout</Button>
                         </div> : (

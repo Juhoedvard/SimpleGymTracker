@@ -5,15 +5,14 @@ import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "../ui/dialog"
 import React from "react"
 import { Button } from "@/components/ui/button"
-import {  Check, Loader2, Plus, X } from "lucide-react"
+import {  Check, Loader2, Plus} from "lucide-react"
 import { Tooltip, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { TooltipContent } from "@radix-ui/react-tooltip"
 import { trpc } from "@/app/_trpc/client"
 import { Exercise} from "@prisma/client"
 import { DialogTitle } from "@radix-ui/react-dialog"
-import { Label } from "../ui/label"
-import { Input } from "../ui/input"
 import { useToast } from "../ui/use-toast"
+import AddSet from "./AddSet"
 
 
 interface ExerciseProps  {
@@ -62,7 +61,7 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
             setOpen(false)
             setFinished(true)
         },
-        onError: () => {       
+        onError: (error) => {       
                 return toast({
                 variant: "destructive",
                 title: `Something went wrong! Make sure that you have applied weight and reps for each set`
@@ -118,9 +117,8 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
                 description: "Weight and rep must be numbers and more than 0"
             })
         }
-
     }
-    
+    ///Add finished exercise to db.
     const finishExercise = () => {
         mutate({
             id: workoutExerciseID, 
@@ -161,63 +159,18 @@ const AddExercise = ({exercise, finished, workoutExerciseID} : ExerciseProps) =>
                             </Tooltip>     
                     </DialogDescription>
                 </DialogHeader>
-
                 <div className="flex flex-col justify-evenly px-2 gap-4">
                     {Array(sets).fill(null).map((_, index)=> {
                         return(
-                            <div key={index} className={reps[index]?.finished === undefined || reps[index]?.finished === false ? "flex flex-col gap-2" : "flex flex-col  gap-2"}>
-                                <Label className="w-fit border-b border-b-slate-400 ">Set {index +1}:</Label>
-                                <div className="flex justify-between">
-                                    {reps[index]?.finished === false ||  reps[index]?.finished === undefined ? 
-                                    <div className="flex gap-2">
-                                            <div className="flex flex-col items-center justify-evenly gap-2">
-                                                <Label className="w-20">Reps:</Label>
-                                                <Input size={2} className="text-center w-20"placeholder={`0`} value={reps[index]?.reps || ""} onChange={(e) =>updateRep(index, parseInt(e.target.value) )} required={true}  type="number" min={1}></Input>
-                                            </div>
-                                            <div className="flex flex-col items-center gap-2">
-                                            <Label className="w-20" >Weight (kg):</Label>
-                                            <Input size={2} className="text-center w-20"placeholder={`0`} value={reps[index]?.weight || ""} onChange={(e) =>updateWeight(index, parseInt(e.target.value) )} required={true}  type="number" min={1}></Input>
-                                            </div>
-                                            <div className="flex items-end">
-                                            <Button variant="default"  onClick={() => addRep(index, reps[index])}>Add</Button> 
-                                            </div>
-                                    </div> :
-                                    <div className="flex  items-center justify-evenly gap-2 ">
-                                        <div className="flex flex-col">
-                                            <Label className="w-20">Reps: </Label>
-                                            <span> {reps[index].reps} </span>
-                                        </div>
-                                        <div className="flex flex-col ">
-                                            <Label>Weight (kg): </Label>
-                                            <span> {reps[index].weight}</span>
-                                        </div>
-                                        
-                                    <Button variant={"ghost"} onClick={() => changesSet(index)}><Check color="green" /></Button>
-                                    </div>
-                                
-                                    }
-                                    {index === sets -1 && 
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>         
-                                                <X className="w-4 h-4" onClick={() => {
-                                                    setSets(sets -1)
-                                                    window.localStorage.setItem("sets", JSON.stringify(sets -1))
-                                                    }}/> 
-                                                    
-                                        </TooltipTrigger>
-                                        <TooltipContent>                                             
-                                                Remove last set
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    }
-                                </div>     
-                            </div>
+                           <AddSet key={index} index={index} reps={reps} updateRep={updateRep} updateWeight={updateWeight} addRep={addRep} changesSet={changesSet} sets={sets} setSets={setSets}/> 
                         )
                 })}
                     <DialogFooter className="flex justify-end pt-4">
-                        {!finishingExercise ?<Button variant="outline" className=" text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishExercise()} >
+                        {!finishingExercise ?
+                        <Button variant="outline" className=" text-blue-600 hover:transform hover:text-blue-600 hover:scale-110" onClick={() => finishExercise()} >
                             Finish exercise
-                        </Button> : <Loader2 className="w-4 h-4 animate-spin"/>}
+                        </Button>
+                        : <Loader2 className="w-4 h-4 animate-spin"/>}
                     </DialogFooter>
                 </div>
              </TooltipProvider>
