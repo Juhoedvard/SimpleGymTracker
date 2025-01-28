@@ -2,7 +2,7 @@
 
 ## SimpleGymTracker
 
-
+## Not working atm!!
 ## Description: 
 
   This project is made with Next.js approuter. Main goal of this project is to learn about Next.js approuter and how to use server sider rendering and client components. Project could be still improved and I am planning to create a mobile app about this project
