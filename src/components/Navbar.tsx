@@ -1,16 +1,19 @@
 import Link from "next/link"
 import MaxWidthWrapper from "./MaxWidthWrapper"
 import { Button, buttonVariants } from "./ui/button"
-import {LoginLink, LogoutLink, RegisterLink, getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server"
+import {RegisterLink, LoginLink, LogoutLink,} from "@kinde-oss/kinde-auth-nextjs/components";
+import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server"
 import { DropdownMenu,DropdownMenuItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
 
 
 
-const Navbar = () =>  {
+const Navbar =  async ()  =>  {
 
-    const { getUser } = getKindeServerSession()
-    const user = getUser()
+    const { getUser } =  getKindeServerSession()
+    const user = await getUser()
+    console.log(user)
+    console.log(process.env.KINDE_POST_LOGOUT_REDIRECT_URL);
     return (
         <nav className="sticky h-14 inset-x-0 top-0 z-30  border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
             <MaxWidthWrapper>
@@ -29,7 +32,7 @@ const Navbar = () =>  {
                                 size: "sm"
                             })}>Start now</RegisterLink>
                         </>
-                    :   <>
+                    : user &&  <>
                         <Link href="/Charts"
                          className={buttonVariants({
                             variant: "ghost",
@@ -53,9 +56,9 @@ const Navbar = () =>  {
                             <DropdownMenuContent className="w-52">
                                 <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem><Link href="/UserPage">Dashboard</Link></DropdownMenuItem>
-                                <DropdownMenuItem><Link href="/Charts">Charts</Link></DropdownMenuItem>
-                                <DropdownMenuItem><LogoutLink>SignOut</LogoutLink></DropdownMenuItem>
+                                <DropdownMenuItem ><Link href="/UserPage">Dashboard</Link></DropdownMenuItem>
+                                <DropdownMenuItem ><Link href="/Charts">Charts</Link></DropdownMenuItem>
+                                <DropdownMenuItem ><LogoutLink>SignOut</LogoutLink></DropdownMenuItem>
 
                             </DropdownMenuContent>
                         </DropdownMenu>

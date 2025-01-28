@@ -9,8 +9,9 @@ import { revalidatePath } from "next/cache";
 
 export const appRouter = router({
     authCallback: publicProcedure.query( async () => {
+        console.log("Täällä")
         const {getUser} = getKindeServerSession()
-        const user = getUser()
+        const user = await getUser()
 
         if(!user.id || !user.email){
             throw new TRPCError({code: "UNAUTHORIZED"})
